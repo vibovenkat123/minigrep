@@ -1,5 +1,21 @@
 use std::{cmp::Ordering, error::Error, fs};
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_search() {
+        let query = "empow";
+        let contents = "\
+Rust is
+A language empowering everyone
+to build reliable and efficient software.
+                        ";
+        assert_eq!(vec!["A language empowering everyone"], search(query, contents));
+    }
+}
+
 pub struct Config {
     pub query: String,
     pub path: String,
@@ -28,4 +44,13 @@ pub fn run(conf: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&conf.path)?;
     println!("contents:\n{contents}");
     Ok(())
+}
+pub fn search<'t>(query: &str, contents: &'t str) -> Vec<&'t str> {
+    let mut result: Vec<&str> = Vec::new();
+    for line in contents.lines() {
+        if line.contains(&query) {
+            result.push(&line);
+        }
+    }
+    result
 }
