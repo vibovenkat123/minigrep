@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, env, fs, process};
+use std::{cmp::Ordering, env, fs, process, error::Error};
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -8,27 +8,10 @@ fn main() {
     });
     println!("Finding {}", &config.query);
     println!("In file {}", &config.path);
-
-    let contents_out = fs::read_to_string(&config.path);
-    let contents = match contents_out {
-        Ok(val) => val,
-        Err(err) => {
-            let err_code_out = err.raw_os_error();
-            let code = match err_code_out {
-                Some(val) => val,
-                None => {
-                    panic!("{}", err);
-                }
-            };
-            if code == 2 {
-                println!("{}: file not found", &config.path);
-            } else {
-                panic!("{}", err);
-            }
-            process::exit(1);
-        }
-    };
-    println!("contents:\n{contents}");
+    if let Err(e) = run(config) {
+        println!("Application Error: {e}");
+        process::exit(1);
+    }
 }
 
 struct Config {
@@ -53,4 +36,10 @@ impl Config {
         };
         Ok(Config { query, path })
     }
+}
+
+fn run(conf: Config) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(&conf.path)?;
+    println!("contents:\n{contents}");
+    Ok(())
 }
