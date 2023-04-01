@@ -15,7 +15,7 @@ fn main() {
         Ordering::Equal => {
             let query_arg = &args[1];
             let path_arg = &args[2];
-            (path_arg.to_string(), query_arg.to_string())
+            (query_arg.to_string(), path_arg.to_string())
         }
     };
     println!("Finding {}", &query);
