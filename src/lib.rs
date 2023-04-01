@@ -59,11 +59,9 @@ impl Config {
 
 pub fn run(conf: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&conf.path)?;
-    let mut containing_lines: Vec<&str> = Vec::new();
+    let mut containing_lines: Vec<&str> = search(&conf.query, &contents) ;
     if conf.ignore_case {
         containing_lines = search_insensitive(&conf.query, &contents);
-    } else {
-        containing_lines = search(&conf.query, &contents);
     }
     for line in containing_lines {
         println!("{line}");
