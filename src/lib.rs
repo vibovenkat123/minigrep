@@ -57,3 +57,14 @@ pub fn search<'t>(query: &str, contents: &'t str) -> Vec<&'t str> {
     }
     result
 }
+
+pub fn search_insensitive<'t>(query: &str, contents: &'t str) -> Vec<&'t str> {
+    let query = query.to_lowercase();
+    let mut result: Vec<&str> = Vec::new();
+    for line in contents.lines() {
+        if line.to_lowercase().contains(&query) {
+            result.push(&line);
+        }
+    }
+    result
+}
