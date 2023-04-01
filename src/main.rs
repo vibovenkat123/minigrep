@@ -2,7 +2,10 @@ use std::{cmp::Ordering, env, fs, process};
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let config = Config::new(&args);
+    let config = Config::new(&args).unwrap_or_else(|e| {
+        println!("Problem parsing the arguments: {}", e);
+        process::exit(1);
+    });
     println!("Finding {}", &config.query);
     println!("In file {}", &config.path);
 
@@ -34,15 +37,13 @@ struct Config {
 }
 
 impl Config {
-    fn new(args: &[String]) -> Config {
+    fn new(args: &[String]) -> Result<Config, &'static str> {
         let (query, path): (String, String) = match args.len().cmp(&3) {
             Ordering::Less => {
-                println!("Not enough arguments");
-                process::exit(1);
+                return Err("not entought arguments");
             }
             Ordering::Greater => {
-                println!("Too much arguments");
-                process::exit(1);
+                return Err("Too much arguments");
             }
             Ordering::Equal => {
                 let query_arg = &args[1];
@@ -50,6 +51,6 @@ impl Config {
                 (query_arg.to_string(), path_arg.to_string())
             }
         };
-        Config { query, path }
+        Ok(Config { query, path })
     }
 }
