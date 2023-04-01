@@ -35,6 +35,7 @@ Empowering
 pub struct Config {
     pub query: String,
     pub path: String,
+    pub ignore_case: bool,
 }
 
 impl Config {
@@ -58,7 +59,12 @@ impl Config {
 
 pub fn run(conf: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&conf.path)?;
-    let containing_lines = search(&conf.query, &contents);
+    let mut containing_lines: Vec<&str> = Vec::new();
+    if conf.ignore_case {
+        containing_lines = search_insensitive(&conf.query, &contents);
+    } else {
+        containing_lines = search(&conf.query, &contents);
+    }
     for line in containing_lines {
         println!("{line}");
     }
