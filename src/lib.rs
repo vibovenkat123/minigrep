@@ -3,16 +3,32 @@ use std::{cmp::Ordering, error::Error, fs};
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
-    fn test_search() {
-        let query = "empow";
+    fn case_insensitive() {
+        let query = "RUST";
         let contents = "\
 Rust is
 A language empowering everyone
 to build reliable and efficient software.
                         ";
-        assert_eq!(vec!["A language empowering everyone"], search(query, contents));
+        assert_eq!(
+            vec!["Rust is"],
+            search_insensitive(query, contents)
+        );
+    }
+    #[test]
+    fn case_sensitive() {
+        let query = "empow";
+        let contents = "\
+Rust is
+A language empowering everyone
+to build reliable and efficient software.
+Empowering
+                        ";
+        assert_eq!(
+            vec!["A language empowering everyone"],
+            search(query, contents)
+        );
     }
 }
 
