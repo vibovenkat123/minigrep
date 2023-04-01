@@ -42,7 +42,10 @@ impl Config {
 
 pub fn run(conf: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&conf.path)?;
-    println!("contents:\n{contents}");
+    let containing_lines = search(&conf.query, &contents);
+    for line in containing_lines {
+        println!("{line}");
+    }
     Ok(())
 }
 pub fn search<'t>(query: &str, contents: &'t str) -> Vec<&'t str> {
