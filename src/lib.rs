@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, error::Error, fs};
+use std::{cmp::Ordering, error::Error, fs, env};
 
 #[cfg(test)]
 mod tests {
@@ -53,7 +53,8 @@ impl Config {
                 (query_arg.to_string(), path_arg.to_string())
             }
         };
-        Ok(Config { query, path })
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        Ok(Config { query, path, ignore_case})
     }
 }
 
