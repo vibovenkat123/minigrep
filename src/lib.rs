@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, error::Error, fs, env};
+use std::{env, error::Error, fs};
 
 #[cfg(test)]
 mod tests {
@@ -11,10 +11,7 @@ Rust is
 A language empowering everyone
 to build reliable and efficient software.
                         ";
-        assert_eq!(
-            vec!["Rust is"],
-            search_insensitive(query, contents)
-        );
+        assert_eq!(vec!["Rust is"], search_insensitive(query, contents));
     }
     #[test]
     fn case_sensitive() {
@@ -39,28 +36,28 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        let (query, path): (String, String) = match args.len().cmp(&3) {
-            Ordering::Less => {
-                return Err("not entought arguments");
-            }
-            Ordering::Greater => {
-                return Err("Too much arguments");
-            }
-            Ordering::Equal => {
-                let query_arg = &args[1];
-                let path_arg = &args[2];
-                (query_arg.to_string(), path_arg.to_string())
-            }
+    pub fn init(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("No query argument"),
+        };
+        let path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("No file path argument"),
         };
         let ignore_case = env::var("IGNORE_CASE").is_ok();
-        Ok(Config { query, path, ignore_case})
+        Ok(Config {
+            query,
+            path,
+            ignore_case,
+        })
     }
 }
 
 pub fn run(conf: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&conf.path)?;
-    let mut containing_lines: Vec<&str> = search(&conf.query, &contents) ;
+    let mut containing_lines: Vec<&str> = search(&conf.query, &contents);
     if conf.ignore_case {
         containing_lines = search_insensitive(&conf.query, &contents);
     }
@@ -70,13 +67,10 @@ pub fn run(conf: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 pub fn search<'t>(query: &str, contents: &'t str) -> Vec<&'t str> {
-    let mut result: Vec<&str> = Vec::new();
-    for line in contents.lines() {
-        if line.contains(&query) {
-            result.push(&line);
-        }
-    }
-    result
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn search_insensitive<'t>(query: &str, contents: &'t str) -> Vec<&'t str> {
