@@ -1,6 +1,6 @@
 //! # Minigrep
 //!
-//! `minigrep` allows you to search for text within a file
+//! `vibo_minigrep` allows you to search for text within a file
 use std::{env, error::Error, fs};
 
 
@@ -35,7 +35,7 @@ Empowering
     }
     #[test]
     fn config_init() {
-        let args = ["minigrep", "query", "path"].iter().map(|s| s.to_string());
+        let args = ["vibo_minigrep", "query", "path"].iter().map(|s| s.to_string());
         let conf = Config::init(args);
         assert!(conf.is_ok());
         let conf = conf.unwrap();
@@ -50,12 +50,12 @@ Empowering
     }
     #[test]
     fn config_init_no_args() {
-        let args = ["minigrep"].iter().map(|s| s.to_string());
+        let args = ["vibo_minigrep"].iter().map(|s| s.to_string());
         assert!(Config::init(args).is_err());
     }
     #[test]
     fn config_init_ignore_case() {
-        let args = ["minigrep", "query", "path"].iter().map(|s| s.to_string());
+        let args = ["vibo_minigrep", "query", "path"].iter().map(|s| s.to_string());
         env::set_var("IGNORE_CASE", "1");
         let conf = Config::init(args);
         assert!(conf.is_ok());
@@ -85,13 +85,13 @@ impl Config {
     /// # Example
     /// ```
     /// fn main() {
-    ///     let args = ["minigrep", "query", "example.txt"].iter().map(|s| s.to_string());
+    ///     let args = ["vibo_minigrep", "query", "example.txt"].iter().map(|s| s.to_string());
     ///
-    ///     let config = minigrep::Config::init(args).unwrap_or_else(|err| {
+    ///     let config = vibo_minigrep::Config::init(args).unwrap_or_else(|err| {
     ///         eprintln!("err: {}", err);
     ///         std::process::exit(1);
     ///     });
-    ///     let config_to_test = minigrep::Config {
+    ///     let config_to_test = vibo_minigrep::Config {
     ///         query: "query".to_string(),
     ///         path: "example.txt".to_string(),
     ///         ignore_case: false,
@@ -132,7 +132,7 @@ impl Config {
 /// # Example
 ///
 /// ```
-/// use minigrep::Config;
+/// use vibo_minigrep::Config;
 /// use std::{error::Error, fs};
 /// fn main() {
 ///     let mut file_path= "example.txt";
@@ -142,7 +142,7 @@ impl Config {
 ///         ignore_case: false,
 ///         path: file_path.to_string(),
 ///     };
-///     let run_res = minigrep::run(conf);
+///     let run_res = vibo_minigrep::run(conf);
 ///     assert!(run_res.is_ok());
 ///     fs::remove_file(file_path);
 /// }
@@ -183,7 +183,7 @@ pub fn run(conf: Config) -> Result<(), Box<dyn Error>> {
 ///there
 ///     ";
 ///     let query = "there";
-///     let lines = minigrep::search(&query, &cool_string);
+///     let lines = vibo_minigrep::search(&query, &cool_string);
 ///     assert_eq!(vec!["there"], lines);
 /// }
 /// ```
@@ -206,7 +206,7 @@ pub fn search<'t>(query: &str, contents: &'t str) -> Vec<&'t str> {
 /// baz
 ///     ";
 ///     let query = "FOO";
-///     let lines = minigrep::search_insensitive(&query, &cool_string);
+///     let lines = vibo_minigrep::search_insensitive(&query, &cool_string);
 ///     assert_eq!(vec!["foo"], lines);
 /// }
 /// ```

@@ -1,4 +1,4 @@
-use minigrep::Config;
+use vibo_minigrep::Config;
 use std::{env, process};
 
 fn main() {
@@ -9,7 +9,7 @@ fn main() {
         process::exit(1);
     });
     // run the main application
-    if let Err(e) = minigrep::run(config) {
+    if let Err(e) = vibo_minigrep::run(config) {
         // if there is a problem while running
         eprintln!("Application Error: {e}");
         process::exit(1);
